@@ -41,6 +41,17 @@ class StatsCommandTest extends CommandTestCase
         $this->tester->execute(array(
             'cache-name' => $this->cacheName,
         ));
-        $this->assertEquals("Stats were not provided for the {$this->cacheName} provider of type Doctrine\\Common\\Cache\\ArrayCache\n", $this->tester->getDisplay());
+
+        $stats = $this->tester->getDisplay();
+
+        $this->assertStringStartsWith(
+            "Stats for the {$this->cacheName} provider of type Doctrine\\Common\\Cache\\ArrayCache:",
+            $stats
+        );
+        $this->assertContains("[hits] 0\n", $stats);
+        $this->assertContains("[misses] 0\n", $stats);
+        $this->assertRegExp('/\[uptime\] [0-9]{10}' . "\n/", $stats);
+        $this->assertContains("[memory_usage] \n", $stats);
+        $this->assertContains("[memory_available] \n", $stats);
     }
 }
